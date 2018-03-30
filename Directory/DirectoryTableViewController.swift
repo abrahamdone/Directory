@@ -1,5 +1,5 @@
 //
-//  DirectoryViewController.swift
+//  DirectoryTableViewController.swift
 //  Directory
 //
 //  Created by Abraham Done on 3/22/18.
@@ -8,10 +8,7 @@
 
 import UIKit
 
-class DirectoryViewController: UIViewController {
-
-    @IBOutlet weak var tableView: UITableView!
-    
+class DirectoryTableViewController: UITableViewController {
     private(set) var directory: Directory?
 }
 
@@ -31,27 +28,30 @@ extension DirectoryTableViewController {
         title = NSLocalizedString("DirectoryViewController", value: "Directory", comment: "The title of the directory view")
 
         tableView.register(DirectoryCell.self)
-        tableView.delegate = self
-        tableView.dataSource = self
         tableView.rowHeight = UITableViewAutomaticDimension
         tableView.estimatedRowHeight = 40
         tableView.tableFooterView = UIView()
         
-        tableView.refreshControl?.addTarget(self, action: #selector(refresh), for: .valueChanged)
+        tableView.refreshControl?.addTarget(self, action: #selector(forceRefresh), for: .valueChanged)
     }
     
     @objc
-    func refresh() {
-        Directory.fetch(forceReload: false, success: { [weak self] directory in
+    func forceRefresh() {
+        refresh(force: true)
+    }
+    
+    func refresh(force: Bool = false) {
+        Directory.fetch(forceReload: force, success: { [weak self] directory in
+            self?.refreshControl?.endRefreshing()
             if directory.individuals.count == 0 {
                 self?.showMissingDataAlert()
             } else {
                 self?.load(directory: directory)
             }
         }) { [weak self] error in
+            self?.refreshControl?.endRefreshing()
             self?.showMissingDataAlert()
         }
-
     }
     
     func load(directory: Directory) {
@@ -67,11 +67,9 @@ extension DirectoryTableViewController {
         alert.addAction(UIAlertAction(title: action, style: .cancel, handler: nil))
         present(alert, animated: true, completion: nil)
     }
-}
 
-// MARK: UITableViewDelegate
-extension DirectoryTableViewController: UITableViewDelegate {
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+    // MARK: UITableViewDelegate
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         guard let directory = directory, let vc = storyboard?.instantiateViewController(withIdentifier: IndividualViewController.identifier) as? IndividualViewController else {
             return
         }
@@ -81,19 +79,17 @@ extension DirectoryTableViewController: UITableViewDelegate {
         
         tableView.deselectRow(at: indexPath, animated: true)
     }
-}
 
-// MARK: UITableViewDataSource
-extension DirectoryTableViewController: UITableViewDataSource {
-    func numberOfSections(in tableView: UITableView) -> Int {
+    // MARK: UITableViewDataSource
+    override func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
     
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return directory?.individuals.count ?? 0
     }
     
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let directory = directory, let cell = tableView.dequeueReusableCell(withIdentifier: DirectoryCell.identifier) as? DirectoryCell else {
             return UITableViewCell()
         }

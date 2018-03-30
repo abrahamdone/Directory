@@ -3,7 +3,7 @@
 //  Directory
 //
 //  Created by Abraham Done on 3/22/18.
-//  Copyright © 2018 LDS. All rights reserved.
+//  Copyright © 2018 Abraham Done. All rights reserved.
 //
 
 import UIKit
@@ -16,6 +16,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+        
+        CoreDataManager.createContainer()
+        
         return true
     }
 

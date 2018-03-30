@@ -3,7 +3,7 @@
 //  TeamView
 //
 //  Created by Abraham Done on 3/15/18.
-//  Copyright © 2018 SoFi. All rights reserved.
+//  Copyright © 2018 Abraham Done. All rights reserved.
 //
 
 import UIKit

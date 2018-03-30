@@ -3,22 +3,20 @@
 //  Directory
 //
 //  Created by Abraham Done on 3/22/18.
-//  Copyright © 2018 LDS. All rights reserved.
+//  Copyright © 2018 Abraham Done. All rights reserved.
 //
 
 import UIKit
 
+import AlamofireImage
+
 class DirectoryCell: UITableViewCell {
 
-    override func awakeFromNib() {
-        super.awakeFromNib()
-        // Initialization code
-    }
-
-    override func setSelected(_ selected: Bool, animated: Bool) {
-        super.setSelected(selected, animated: animated)
-
-        // Configure the view for the selected state
-    }
+    @IBOutlet weak var name: UILabel!
+    @IBOutlet weak var affiliationImage: UIImageView!
     
+    func setup(individual: Individual) {
+        name.text = individual.fullName
+        affiliationImage.image = individual.affiliation.image
+    }
 }
